@@ -17,8 +17,20 @@ const updateCurrentWeather = (data) => {
 };
 
 const updateForecast = (forecastData) => {
-    
-}
+    const forecastCards = document.querySelectorAll(".weather-cards .card");
+    forecastData.list.forEach((forecast, index) => { 
+        const data = new Date(forecast.dt * 1000);
+        const tempCelsius = forecase.main.temp;
+        const windSpeed = forecast.main.humidity;
+
+        const temperatureFahrenheit = celsiusToFahrenheit(temperatureCelsius);
+
+        forecastCards[index].querySelector("h3").textContent = date.toDateString();
+        forecastCards[index].querySelector("h4:nth-child(2)").textContent = `Temp: ${temperatureFahrenheit.toFixed(2)}°F`;
+        forecastCards[index].querySelector("h4:nth-child(3)").textContent = `Wind Speed: ${windSpeed} m/s`;
+        forecastCards[index].querySelector("h4:nth-child(4)").textContent = `Humidity: ${humidity}%`;
+    });
+};
 
 const getLocation = () => {
     const city =cityInput.value.trim();
