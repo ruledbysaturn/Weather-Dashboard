@@ -20,7 +20,7 @@ const updateForecast = (forecastData) => {
     const forecastCards = document.querySelectorAll(".weather-cards .card");
     forecastData.list.forEach((forecast, index) => { 
         const data = new Date(forecast.dt * 1000);
-        const tempCelsius = forecase.main.temp;
+        const tempCelsius = forecast.main.temp;
         const windSpeed = forecast.main.humidity;
 
         const temperatureFahrenheit = celsiusToFahrenheit(temperatureCelsius);
