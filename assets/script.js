@@ -24,11 +24,11 @@ const updateForecast = (forecastData) => {
     const forecastCards = document.querySelectorAll(".weather-cards .card");
     forecastData.list.forEach((forecast, index) => { 
         const data = new Date(forecast.dt * 1000);
-        const tempCelsius = forecast.main.temp;
+        const tempKelvin = forecast.main.temp;
         const windSpeed = forecast.main.speed;
         const humidity = forecast.main.humidity;
 
-        const tempFahrenheit = celsiusToFahrenheit(tempCelsius);
+        const tempFahrenheit = (tempKelvin - 273.15) * 9/5 +32;
 
         forecastCards[index].querySelector("h3").textContent = data.toDateString();
         forecastCards[index].querySelector("h4:nth-child(2)").textContent = `Temp: ${tempFahrenheit.toFixed(2)}°F`;
