@@ -1,3 +1,4 @@
+
 const APIKEY ="55f55ad7babd3c5f4fdd516e4df53a7a";
 const searchBtn = document.querySelector(".search-btn");
 const cityInput = document.querySelector(".city-input");
@@ -23,7 +24,10 @@ const updateCurrentWeather = (data) => {
 const updateForecast = (forecastData) => {
     const forecastCards = document.querySelectorAll(".weather-cards .card");
     forecastData.list.forEach((forecast, index) => { 
+        console.log('Forecast:', forecast);
+
         const data = new Date(forecast.dt * 1000);
+        console.log("Date:", data);
         const tempKelvin = forecast.main.temp;
         const windSpeed = forecast.wind.speed;
         const humidity = forecast.main.humidity;
@@ -52,8 +56,22 @@ const updateSearch = (city) => {
         getWeatherData(city);
     });
     searchHistoryDiv.appendChild(historyItem);
-
 };
+
+const displaySearchHistory = () => {
+    const searchHistoryDiv = document.getElementById('searchHistory');
+    searchHistoryDiv.innerHTML = "";
+    const searchHistory = JSON.parse(localStorage.getItem('searchHistory')) || [];
+    searchHistory.forEach((city) => {
+        const historyItem = document.createElement('div');
+        historyItem.textContent = city;
+        historyItem.addEventListener('click', () => {
+            getWeatherData(city);
+        });
+        searchHistoryDiv.appendChild(historyItem);
+    });
+};
+
 
 const getLocation = () => {
     const city =cityInput.value.trim();
@@ -73,6 +91,7 @@ const getLocation = () => {
     })
     .then(() => {
         updateSearch(city);
+        displaySearchHistory();
     })
     .catch((error) => {
 
