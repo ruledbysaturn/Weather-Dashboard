@@ -9,41 +9,50 @@ const celsiusToFahrenheit = (celsius) => {
 
 const updateCurrentWeather = (data) => {
     const location = data.name;
+    const date = new Date(data.dt * 1000);
+    const icon = data.weather[0].icon;
     const tempKelvin = data.main.temp;
     const windSpeed = data.wind.speed;
     const humidity = data.main.humidity;
 
-    const tempFahrenheit = (tempKelvin - 273.15) * 9/5 +32;
+    const tempFahrenheit = (tempKelvin - 273.15) * 9/5 + 32;
 
-    document.querySelector(".details h2").textContent = location;
-    document.querySelector(".details h3:nth-child(2)").textContent = `Temp: ${tempFahrenheit.toFixed(2)}°F`;
-    document.querySelector(".details h3:nth-child(3)").textContent = `Wind Speed: ${windSpeed} m/s`;
-    document.querySelector(".details h3:nth-child(4)").textContent = `Humidity: ${humidity}%`;
+    const details = document.querySelector(".details");
+    details.querySelector("h2").textContent = `${location} (${date.toLocaleDateString()})`;
+    details.querySelector("h3:nth-child(2)").textContent = `Temperature: ${tempFahrenheit.toFixed(2)} °F`;
+    details.querySelector("h3:nth-child(3)").textContent = `Wind Speed: ${windSpeed} m/s`;
+    details.querySelector("h3:nth-child(4)").textContent = `Humidity: ${humidity}%`;
 };
 
+
 const updateForecast = (forecastData) => {
-    const forecastCards = document.querySelectorAll(".weather-cards .card");
-    forecastData.list.forEach((forecast, index) => { 
-        console.log('Forecast:', forecast);
+  const forecastCards = document.querySelectorAll(".weather-cards .card");
+  forecastData.list.forEach((forecast, index) => {
+    const data = new Date(forecast.dt * 1000);
+    const tempKelvin = forecast.main.temp;
+    const windSpeed = forecast.wind.speed;
+    const humidity = forecast.main.humidity;
+    const dayOfWeek = getDayOfWeek(data.getUTCDay());
+    const tempFahrenheit = (tempKelvin - 273.15) * 9 / 5 + 32;
 
-        const data = new Date(forecast.dt * 1000);
-        console.log("Date:", data);
-        const tempKelvin = forecast.main.temp;
-        const windSpeed = forecast.wind.speed;
-        const humidity = forecast.main.humidity;
-        const dayOfWeek = getDayOfWeek(data.getUTCDay());
-
-        const tempFahrenheit = (tempKelvin - 273.15) * 9/5 +32;
-
-        forecastCards[index].querySelector("h3").textContent = `${dayOfWeek} ${data.toDateString()}`;
-        forecastCards[index].querySelector("h4:nth-child(2)").textContent = `Temp: ${tempFahrenheit.toFixed(2)}°F`;
-        forecastCards[index].querySelector("h4:nth-child(3)").textContent = `Wind Speed: ${windSpeed} m/s`;
-        forecastCards[index].querySelector("h4:nth-child(4)").textContent = `Humidity: ${humidity}%`;
-    });
+    const card = forecastCards[index];
+    card.querySelector("h3").textContent = `${dayOfWeek} ${data.toDateString()}`;
+    card.querySelector("h4:nth-child(2)").textContent = `Temp: ${tempFahrenheit.toFixed(2)}°F`;
+    card.querySelector("h4:nth-child(3)").textContent = `Wind Speed: ${windSpeed} m/s`;
+    card.querySelector("h4:nth-child(4)").textContent = `Humidity: ${humidity}%`;
+  });
 };
 
 const getDayOfWeek = (dayIndex) => {
-    const daysOfWeek = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+    const daysOfWeek = [
+        'Sunday', 
+        'Monday', 
+        'Tuesday', 
+        'Wednesday', 
+        'Thursday', 
+        'Friday', 
+        'Saturday'
+    ];
     return daysOfWeek[dayIndex];
 };
 
@@ -51,11 +60,15 @@ const updateSearch = (city) => {
     const searchHistoryDiv = document.getElementById("searchHistory");
     const historyItem = document.createElement("div");
     historyItem.textContent = city;
+    searchHistoryDiv.appendChild(historyItem);
 
     historyItem.addEventListener("click", () => {
         getWeatherData(city);
     });
-    searchHistoryDiv.appendChild(historyItem);
+
+    let searchHistory = JSON.parse(localStorage.getItem("searchHistory") || "[]");
+    searchHistory.push(city);
+    localStorage.setItem("searchHistory", JSON.stringify(searchHistory));
 };
 
 const displaySearchHistory = () => {
@@ -79,6 +92,7 @@ const getLocation = () => {
     const geocoding_url = `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${APIKEY}`;
 
     fetch(geocoding_url).then((res) => res.json()).then((data) => {
+        updateCurrentWeather(data);
         const latitude = data.coord.lat;
         const longitude = data.coord.lon;
 
@@ -99,6 +113,12 @@ const getLocation = () => {
 
     })
 };
+
+cityInput.addEventListener('keyup', (event) => {
+    if (event.key === 'Enter') {
+        getLocation();
+    }
+});
 
 
 searchBtn.addEventListener("click", getLocation);
