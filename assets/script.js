@@ -29,22 +29,23 @@ const updateCurrentWeather = (data) => {
 
 
 const updateForecast = (forecastData) => {
-  const forecastCards = document.querySelectorAll(".weather-cards .card");
-  forecastData.list.forEach((forecast, index) => {
-    const data = new Date(forecast.dt * 1000);
-    const tempKelvin = forecast.main.temp;
-    const windSpeed = forecast.wind.speed;
-    const humidity = forecast.main.humidity;
-    const dayOfWeek = getDayOfWeek(data.getUTCDay());
-    const tempFahrenheit = (tempKelvin - 273.15) * 9 / 5 + 32;
-
-    const card = forecastCards[index];
-    card.querySelector("h3").textContent = `${dayOfWeek} ${data.toDateString()}`;
-    card.querySelector("h4:nth-child(2)").textContent = `Temp: ${tempFahrenheit.toFixed(2)}°F`;
-    card.querySelector("h4:nth-child(3)").textContent = `Wind Speed: ${windSpeed} m/s`;
-    card.querySelector("h4:nth-child(4)").textContent = `Humidity: ${humidity}%`;
-  });
-};
+    const forecastCards = document.querySelectorAll(".weather-cards .card");
+    forecastData.list.forEach((forecast, index) => {
+      const data = new Date(forecast.dt * 1000);
+      const tempKelvin = forecast.main.temp;
+      const windSpeed = forecast.wind.speed;
+      const humidity = forecast.main.humidity;
+      const dayOfWeek = getDayOfWeek(data.getDay());
+  
+      const tempFahrenheit = (tempKelvin - 273.15) * 9 / 5 + 32;
+  
+      const card = forecastCards[index];
+      card.querySelector("h3").textContent = `${dayOfWeek} ${data.toDateString()}`;
+      card.querySelector("h4:nth-child(2)").textContent = `Temp: ${tempFahrenheit.toFixed(2)}°F`;
+      card.querySelector("h4:nth-child(3)").textContent = `Wind Speed: ${windSpeed} m/s`;
+      card.querySelector("h4:nth-child(4)").textContent = `Humidity: ${humidity}%`;
+    });
+  };
 
 const getDayOfWeek = (dayIndex) => {
     const daysOfWeek = [
