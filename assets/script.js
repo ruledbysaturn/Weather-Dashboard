@@ -1,3 +1,6 @@
+document.addEventListener('DOMContentLoaded', function () {
+    displaySearchHistory();
+});
 
 const APIKEY ="55f55ad7babd3c5f4fdd516e4df53a7a";
 const searchBtn = document.querySelector(".search-btn");
@@ -57,6 +60,12 @@ const getDayOfWeek = (dayIndex) => {
 };
 
 const updateSearch = (city) => {
+    let searchHistory = JSON.parse(localStorage.getItem("searchHistory") || "[]");
+    searchHistory.push(city);
+    localStorage.setItem("searchHistory", JSON.stringify(searchHistory));
+
+    displaySearchHistory();
+
     const searchHistoryDiv = document.getElementById("searchHistory");
     const historyItem = document.createElement("div");
     historyItem.textContent = city;
@@ -65,10 +74,6 @@ const updateSearch = (city) => {
     historyItem.addEventListener("click", () => {
         getWeatherData(city);
     });
-
-    let searchHistory = JSON.parse(localStorage.getItem("searchHistory") || "[]");
-    searchHistory.push(city);
-    localStorage.setItem("searchHistory", JSON.stringify(searchHistory));
 };
 
 const displaySearchHistory = () => {
